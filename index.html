@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Letter for You</title>
+    <!-- 引入字体: Pinyon Script (用于花体L) 和 Noto Serif SC (用于其他文字) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            /* 纯白配色 */
+            --envelope-color: #f2f2f2; 
+            --envelope-flap-color: #ffffff; 
+            --envelope-inside: #dcdcdc; 
+        }
+
+        body {
+            /* ★★★ 这里改成了读取本地图片 background.jpg ★★★ */
+            background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), 
+                        url('background.jpg');
+            
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            
+            font-family: 'Noto Serif SC', serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1200px;
+        }
+        
+        body {
+            background-color: #5d6d7e;
+        }
+
+        /* 纸张纹理 */
+        .texture-paper {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+        }
+
+        /* 信封容器 */
+        .envelope-wrapper {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            cursor: pointer;
+            transition: transform 0.6s ease;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.3));
+        }
+
+        .envelope-wrapper:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+
+        /* 信封主体 */
+        .envelope {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--envelope-color);
+            z-index: 10;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        /* 底部大三角 */
+        .triangle-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-bottom: 110px solid #ffffff; 
+            z-index: 3;
+        }
+
+        /* 左侧三角 */
+        .triangle-left {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid var(--envelope-color);
+            border-top: 110px solid transparent;
+            border-bottom: 110px solid var(--envelope-color);
+            z-index: 2;
+        }
+
+        /* 右侧三角 */
+        .triangle-right {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-right: 160px solid var(--envelope-color);
+            border-top: 110px solid transparent;
+            border-bottom: 110px solid var(--envelope-color);
+            z-index: 2;
+        }
+
+        /* 信封盖子 */
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 120px solid var(--envelope-flap-color);
+            transform-origin: top;
+            transition: transform 0.6s 0.2s cubic-bezier(0.4, 0, 0.2, 1), z-index 0.2s;
+            z-index: 15;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+        /* 淡黄色火漆印 Seal */
+        .seal {
+            position: absolute;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45px;
+            height: 45px;
+            /* 奶油淡黄渐变 */
+            background: radial-gradient(circle at 30% 30%, #fdfbf7, #e8dcb5);
+            border-radius: 50%;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15), inset 0 -2px 4px rgba(0,0,0,0.05);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            /* 字体设置 */
+            font-family: 'Pinyon Script', cursive; /* 花体字 */
+            color: #c4a468;
+            font-size: 26px; /* 字体大小 */
+            font-weight: bold;
+            
+            /* 模拟不规则边缘的边框 */
+            border: 3px double #e0d0a0; 
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        /* 内部衬纸 */
+        .inside-pocket {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--envelope-inside);
+            z-index: 1;
+        }
+
+        /* 露出的信纸预览 */
+        .letter-preview {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 92%;
+            height: 90%;
+            background: #fffcf5;
+            z-index: 5;
+            transition: transform 0.8s ease 0.6s;
+            border-radius: 2px 2px 0 0;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            padding-top: 15px;
+        }
+
+        /* 全屏遮罩 */
+        .letter-full-view {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7); 
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+
+        .paper-container {
+            width: auto;
+            max-width: 95%; 
+            max-height: 95vh;
+            background: transparent;
+            transform: translateY(50px) scale(0.9);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .letter-image {
+            max-width: 100%;
+            max-height: 85vh; 
+            width: auto;
+            height: auto;
+            display: block;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            border-radius: 2px;
+            opacity: 0;
+            transition: opacity 1s ease;
+            background: #fff;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: -50px;
+            right: 0;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 110;
+            transition: all 0.3s;
+            backdrop-filter: blur(4px);
+        }
+        .close-btn:hover { 
+            background: rgba(255,255,255,0.4); 
+            transform: rotate(90deg);
+        }
+        
+        .img-error-msg {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #fff;
+            background: rgba(0,0,0,0.8);
+            padding: 20px;
+            border-radius: 8px;
+            width: 320px;
+            line-height: 1.6;
+        }
+
+        /* 动画控制 */
+        .envelope-wrapper.open .flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+        /* 打开时隐藏火漆印 */
+        .envelope-wrapper.open .seal {
+            opacity: 0;
+            transform: translateX(-50%) scale(0.8);
+            pointer-events: none;
+        }
+
+        .envelope-wrapper.open .letter-preview {
+            transform: translateX(-50%) translateY(-100px);
+            z-index: 20;
+        }
+        .letter-full-view.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .letter-full-view.visible .paper-container {
+            transform: translateY(0) scale(1);
+        }
+        
+        .hint-text {
+            position: absolute;
+            bottom: -60px;
+            width: 100%;
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            animation: float 3s ease-in-out infinite;
+            font-family: 'Times New Roman', serif; /* 英文用衬线体更好看 */
+            font-style: italic;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="envelope-wrapper" id="envelopeWrapper">
+        <div class="inside-pocket"></div> 
+        <div class="envelope texture-paper">
+            <div class="triangle-left"></div>
+            <div class="triangle-right"></div>
+            <div class="triangle-bottom"></div>
+
+            <div class="letter-preview">
+                <div class="w-full h-full p-4 flex flex-col items-center">
+                     <div class="w-full h-px bg-gray-200 mb-8"></div>
+                     <div class="w-2/3 h-1 bg-gray-300 opacity-30 rounded mb-3"></div>
+                     <div class="w-1/2 h-1 bg-gray-300 opacity-30 rounded"></div>
+                </div>
+            </div>
+        </div>
+        <div class="flap texture-paper"></div>
+        
+        <!-- 淡黄色火漆印 + 花体L -->
+        <div class="seal">L</div>
+        
+        <div class="hint-text">Click to Open</div>
+    </div>
+
+    <div class="letter-full-view" id="fullView">
+        <div class="paper-container">
+            <button class="close-btn" onclick="resetLetter()">×</button>
+            
+            <img src="letter.jpg" 
+                 alt="书信图片" 
+                 class="letter-image" 
+                 id="letterImage"
+                 onerror="document.querySelector('.img-error-msg').style.display='block'"
+            >
+            
+            <div class="img-error-msg">
+                <p class="font-bold text-lg mb-2">⚠ Image Not Found</p>
+                <p class="text-sm text-left">
+                    1. 请确保背景图命名为: <strong>background.jpg</strong><br>
+                    2. 请确保信件图命名为: <strong>letter.jpg</strong><br>
+                    3. 确保它们和 html 文件在同一个文件夹。
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const envelopeWrapper = document.getElementById('envelopeWrapper');
+        const fullView = document.getElementById('fullView');
+        const letterImage = document.getElementById('letterImage');
+
+        let isOpened = false;
+
+        envelopeWrapper.addEventListener('click', () => {
+            if (isOpened) return;
+            isOpened = true;
+            envelopeWrapper.classList.add('open');
+            
+            setTimeout(() => {
+                fullView.classList.add('visible');
+                setTimeout(() => {
+                    letterImage.style.opacity = 1;
+                }, 300);
+            }, 800); 
+        });
+
+        function resetLetter() {
+            fullView.classList.remove('visible');
+            letterImage.style.opacity = 0;
+            setTimeout(() => {
+                envelopeWrapper.classList.remove('open');
+                isOpened = false;
+            }, 600);
+        }
+    </script>
+</body>
+</html>
