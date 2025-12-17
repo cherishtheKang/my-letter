@@ -4,24 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A Letter for You</title>
-    <!-- 引入字体: Pinyon Script (用于花体L) 和 Noto Serif SC (用于其他文字) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;500&family=Pinyon+Script&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            /* 纯白配色 */
             --envelope-color: #f2f2f2; 
             --envelope-flap-color: #ffffff; 
             --envelope-inside: #dcdcdc; 
         }
 
         body {
-            /* ★★★ 这里改成了读取本地图片 background.jpg ★★★ */
+            /* 背景图 */
             background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), 
                         url('background.jpg');
-            
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -33,18 +30,13 @@
             justify-content: center;
             align-items: center;
             perspective: 1200px;
-        }
-        
-        body {
             background-color: #5d6d7e;
         }
 
-        /* 纸张纹理 */
         .texture-paper {
             background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
         }
 
-        /* 信封容器 */
         .envelope-wrapper {
             position: relative;
             width: 320px;
@@ -58,7 +50,6 @@
             transform: translateY(-8px) scale(1.02);
         }
 
-        /* 信封主体 */
         .envelope {
             position: absolute;
             bottom: 0;
@@ -70,7 +61,6 @@
             border-radius: 4px;
         }
 
-        /* 底部大三角 */
         .triangle-bottom {
             position: absolute;
             bottom: 0;
@@ -83,7 +73,6 @@
             z-index: 3;
         }
 
-        /* 左侧三角 */
         .triangle-left {
             position: absolute;
             bottom: 0;
@@ -96,7 +85,6 @@
             z-index: 2;
         }
 
-        /* 右侧三角 */
         .triangle-right {
             position: absolute;
             bottom: 0;
@@ -109,7 +97,6 @@
             z-index: 2;
         }
 
-        /* 信封盖子 */
         .flap {
             position: absolute;
             top: 0;
@@ -125,7 +112,6 @@
             background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
         }
 
-        /* 淡黄色火漆印 Seal */
         .seal {
             position: absolute;
             top: 90px;
@@ -133,7 +119,6 @@
             transform: translateX(-50%);
             width: 45px;
             height: 45px;
-            /* 奶油淡黄渐变 */
             background: radial-gradient(circle at 30% 30%, #fdfbf7, #e8dcb5);
             border-radius: 50%;
             box-shadow: 0 3px 6px rgba(0,0,0,0.15), inset 0 -2px 4px rgba(0,0,0,0.05);
@@ -141,19 +126,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            
-            /* 字体设置 */
-            font-family: 'Pinyon Script', cursive; /* 花体字 */
+            font-family: 'Pinyon Script', cursive; 
             color: #c4a468;
-            font-size: 26px; /* 字体大小 */
+            font-size: 26px; 
             font-weight: bold;
-            
-            /* 模拟不规则边缘的边框 */
             border: 3px double #e0d0a0; 
             transition: opacity 0.4s ease, transform 0.4s ease;
         }
 
-        /* 内部衬纸 */
         .inside-pocket {
             position: absolute;
             top: 0;
@@ -164,7 +144,6 @@
             z-index: 1;
         }
 
-        /* 露出的信纸预览 */
         .letter-preview {
             position: absolute;
             bottom: 0;
@@ -183,7 +162,6 @@
             padding-top: 15px;
         }
 
-        /* 全屏遮罩 */
         .letter-full-view {
             position: fixed;
             top: 0;
@@ -266,18 +244,15 @@
             line-height: 1.6;
         }
 
-        /* 动画控制 */
         .envelope-wrapper.open .flap {
             transform: rotateX(180deg);
             z-index: 1;
         }
-        /* 打开时隐藏火漆印 */
         .envelope-wrapper.open .seal {
             opacity: 0;
             transform: translateX(-50%) scale(0.8);
             pointer-events: none;
         }
-
         .envelope-wrapper.open .letter-preview {
             transform: translateX(-50%) translateY(-100px);
             z-index: 20;
@@ -300,16 +275,36 @@
             font-size: 1.1rem;
             letter-spacing: 2px;
             animation: float 3s ease-in-out infinite;
-            font-family: 'Times New Roman', serif; /* 英文用衬线体更好看 */
+            font-family: 'Times New Roman', serif;
             font-style: italic;
         }
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-5px); }
         }
+        
+        /* 简单的音量控制按钮样式 (可选) */
+        .music-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            opacity: 0.5;
+            color: white;
+            cursor: pointer;
+            z-index: 1000;
+            transition: opacity 0.3s;
+        }
+        .music-btn:hover { opacity: 1; }
     </style>
 </head>
 <body>
+
+    <!-- ★★★ 音乐播放器 ★★★ -->
+    <!-- loop 表示循环播放 -->
+    <audio id="bgMusic" loop>
+        <!-- 你的音乐文件名必须是 music.mp3 -->
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
 
     <div class="envelope-wrapper" id="envelopeWrapper">
         <div class="inside-pocket"></div> 
@@ -327,30 +322,26 @@
             </div>
         </div>
         <div class="flap texture-paper"></div>
-        
-        <!-- 淡黄色火漆印 + 花体L -->
         <div class="seal">L</div>
-        
         <div class="hint-text">Click to Open</div>
     </div>
 
     <div class="letter-full-view" id="fullView">
         <div class="paper-container">
             <button class="close-btn" onclick="resetLetter()">×</button>
-            
             <img src="letter.jpg" 
                  alt="书信图片" 
                  class="letter-image" 
                  id="letterImage"
                  onerror="document.querySelector('.img-error-msg').style.display='block'"
             >
-            
             <div class="img-error-msg">
                 <p class="font-bold text-lg mb-2">⚠ Image Not Found</p>
                 <p class="text-sm text-left">
-                    1. 请确保背景图命名为: <strong>background.jpg</strong><br>
-                    2. 请确保信件图命名为: <strong>letter.jpg</strong><br>
-                    3. 确保它们和 html 文件在同一个文件夹。
+                    请确保以下3个文件都在GitHub仓库里且名字准确：<br>
+                    1. <strong>index.html</strong><br>
+                    2. <strong>letter.jpg</strong><br>
+                    3. <strong>background.jpg</strong>
                 </p>
             </div>
         </div>
@@ -360,6 +351,7 @@
         const envelopeWrapper = document.getElementById('envelopeWrapper');
         const fullView = document.getElementById('fullView');
         const letterImage = document.getElementById('letterImage');
+        const bgMusic = document.getElementById('bgMusic'); // 获取音乐元素
 
         let isOpened = false;
 
@@ -368,6 +360,13 @@
             isOpened = true;
             envelopeWrapper.classList.add('open');
             
+            // ★★★ 点击信封时，开始播放音乐 ★★★
+            // 设置音量小一点开始，防止吓到人，或者你可以删掉这行用默认音量
+            bgMusic.volume = 0.5; 
+            bgMusic.play().catch(error => {
+                console.log("浏览器限制了自动播放，用户需要交互", error);
+            });
+
             setTimeout(() => {
                 fullView.classList.add('visible');
                 setTimeout(() => {
@@ -379,6 +378,12 @@
         function resetLetter() {
             fullView.classList.remove('visible');
             letterImage.style.opacity = 0;
+            
+            // ★★★ 点击关闭时，暂停音乐 ★★★
+            // 如果你希望音乐一直放，把下面这两行删掉即可
+            bgMusic.pause();
+            bgMusic.currentTime = 0; // 重置进度条到头
+
             setTimeout(() => {
                 envelopeWrapper.classList.remove('open');
                 isOpened = false;
